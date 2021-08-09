@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="_template.xhtml">
+		<ui:define name="titulo"> <!-- Para cada ui:insert posso fazer um ui:defines -->
+			Novo Livro
+		</ui:define>
+			
+		<ui:define name="conteudo">	
+					<h:form>
+						<h:messages id="messages" />
+						<!-- Aqui é onde mostra os required, render, validações -->
+						<fieldset>
+							<legend>Dados do Livro</legend>
+							<h:panelGrid columns="2">
+								<h:outputLabel value="Titulo:" for="titulo" />
+								<h:inputText id="titulo" value="#{livroBean.livro.titulo}"
+									required="true" requiredMessage="O campo título é obrigatório"
+									validatorMessage="Título não pode ser menor que 5 caracteres">
+									<f:validateLength minimum="5" />
+									<f:ajax event="blur" render="messages" />
+								</h:inputText>
+								<h:outputLabel value="ISBN:" for="isbn" />
+								<h:inputText id="isbn" value="#{livroBean.livro.isbn}"
+									validator="#{livroBean.comecaComDigitoUm}">
+											<f:ajax event="keyup" render="messages"/>
+								</h:inputText>
+								<h:outputLabel value="Preço:" for="preco" />
+								<h:inputText id="preco" value="#{livroBean.livro.preco}"
+									validatorMessage="O preço do livro deve estar entre 1,00 e 1000,00">
+									<f:validateDoubleRange minimum="1" maximum="1000" />
+								</h:inputText>
+								<h:outputLabel value="Data de Lançamento:" for="dataLancamento" />
+								<h:inputText id="dataLancamento"
+									value="#{livroBean.livro.dataLancamento.time}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
+										timeZone="America/Sao_Paulo" />
+								</h:inputText>
+				
+				
+								<h:commandButton value="Gravar" action="#{livroBean.gravar}">
+									<f:ajax execute="@form" render="@form :tabelaLivros" />
+									<!-- execute @form envia o formulario todo e render atualiza a tabela de livro  : indica que está fora do form -->
+								</h:commandButton>
+							</h:panelGrid>
+						</fieldset>
+				
+						<fieldset>
+							<legend>Dados do autor</legend>
+							<h:outputLabel value="Selecione o autor" for="autor" />
+							<h:selectOneMenu value="#{livroBean.autorId}" id="autor">
+								<!-- Esse é o id do selectItems para associar o autor ao livro -->
+								<!-- itemValue é uma primaryKey  -->
+								<f:selectItems value="#{livroBean.autores}" var="autor"
+									itemLabel="#{autor.nome}" itemValue="#{autor.id}" />
+							</h:selectOneMenu>
+							<h:commandButton value="Gravar Autor"
+								action="#{livroBean.gravarAutor}">
+								<!-- Método que associa ao livro(não grava no banco) -->
+								<f:ajax execute="autor" render="tabelaDeAutores" />
+								<!-- execute é o id do selectOneMenu / render é a tabela atualizar na mesma hora-->
+							</h:commandButton>
+							<br/>
+							<h:commandLink value="Cadastrar Novo Autor" action="#{livroBean.formAutor}" immediate="true" /><!-- Quem redireciona é o método, immediate necessário para não executar o PROCESS_VALIDATION 3(Ficar preso nas validações)-->
+				
+							<h:dataTable value="#{livroBean.autoresDoLivro}" var="autor" id="tabelaDeAutores">
+								<!-- Mostra os autores que ja entraram pelo gravarAutor() -->
+								<h:column>
+									<h:outputText value="#{autor.nome}" />
+								</h:column>
+							</h:dataTable>
+						</fieldset>
+					</h:form>
+				
+					<h:dataTable value="#{livroBean.livros}" var="livro" id="tabelaLivros">
+						<h:column>
+							<f:facet name="header">Título</f:facet>
+							<h:outputText value="#{livro.titulo}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">ISBN</f:facet>
+							<h:outputText value="#{livro.isbn}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">Preço</f:facet>
+							<h:outputText value="#{livro.preco}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">Data</f:facet>
+							<h:outputText value="#{livro.dataLancamento.time}"
+								pattern="dd/MM/yyyy HH:mm" />
+						</h:column>
+					</h:dataTable>
+	</ui:define>
+	<ui:define name="rodape">Copyright 2021</ui:define>
+	
+</ui:composition>
+</html>
