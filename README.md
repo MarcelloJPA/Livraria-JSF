@@ -1,6 +1,6 @@
 ## Java e JSF I - Sua aplicação Web com JSF2 
 
-### Projeto Inicial Referente a Aula 03 usando Maven e Java 11
+### Projeto Inicial usando Maven 
 
 Obs: Este projeto tomei a liberdade de estruturar em Maven para que as dependências sejam inseridas no arquivo **pom.xml** em evitar inserir o arquivo dentro da pasta.
 
